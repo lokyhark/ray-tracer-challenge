@@ -1,4 +1,7 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::{
+    fmt::{Debug, Display},
+    ops::{Add, Div, Mul, Neg, Rem, Sub},
+};
 
 /// Marker trait for floating point numeric numbers.
 pub trait Num:
@@ -6,11 +9,15 @@ pub trait Num:
     + Sub<Output = Self>
     + Mul<Output = Self>
     + Div<Output = Self>
+    + Rem<Output = Self>
     + Neg<Output = Self>
     + Sized
+    + Clone
+    + Copy
+    + Debug
+    + Display
     + PartialEq
     + PartialOrd
-    + Copy
 {
     const EPSILON: Self;
 
