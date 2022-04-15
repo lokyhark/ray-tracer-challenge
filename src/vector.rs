@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Neg, Sub},
+    ops::{Add, Mul, Neg, Sub},
 };
 
 use crate::{util::float_eq, Num};
@@ -83,6 +83,18 @@ impl<Float: Num> Neg for Vector<Float> {
     }
 }
 
+impl<Float: Num> Mul<Float> for Vector<Float> {
+    type Output = Self;
+
+    fn mul(self, rhs: Float) -> Self::Output {
+        Vector {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -130,5 +142,13 @@ mod tests {
         let vector = Vector::new(1., 2., 3.);
         let result = Vector::new(-1., -2., -3.);
         assert_eq!(-vector, result);
+    }
+
+    #[test]
+    fn mul_scalar() {
+        let vector = Vector::new(1., 2., 3.);
+        let scalar = 2.;
+        let result = Vector::new(2., 4., 6.);
+        assert_eq!(vector * scalar, result);
     }
 }
