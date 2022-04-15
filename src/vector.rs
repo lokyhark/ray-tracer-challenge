@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::Num;
+use crate::{util::float_eq, Num};
 
 /// Geometric object that has magnitude and direction denoted by a tuple of
 /// scalar components `(x,y,z)`.
@@ -29,5 +29,45 @@ impl<Float: Num> Vector<Float> {
     /// ```
     pub fn new(x: Float, y: Float, z: Float) -> Self {
         Self { x, y, z }
+    }
+}
+
+impl<Float: Num> Display for Vector<Float> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.write_fmt(format_args!("({},{},{})", self.x, self.y, self.z))
+    }
+}
+
+impl<Float: Num> PartialEq for Vector<Float> {
+    fn eq(&self, other: &Self) -> bool {
+        float_eq(self.x, other.x) && float_eq(self.y, other.y) && float_eq(self.z, other.z)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::util::float_eq;
+
+    use super::*;
+
+    #[test]
+    fn new() {
+        let vector = Vector::new(1., 2., 3.);
+        assert!(float_eq(vector.x, 1.));
+        assert!(float_eq(vector.y, 2.));
+        assert!(float_eq(vector.z, 3.));
+    }
+
+    #[test]
+    fn display() {
+        let vector = Vector::new(1.1, 2.2, 3.3);
+        assert_eq!(vector.to_string(), "(1.1,2.2,3.3)");
+    }
+
+    #[test]
+    fn partial_eq() {
+        let p1 = Vector::new(1., 2., 3.);
+        let p2 = Vector::new(1.000_001, 2.000_001, 3.000_001);
+        assert_eq!(p1, p2)
     }
 }
