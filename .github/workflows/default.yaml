@@ -34,3 +34,7 @@ jobs:
       run: cargo build --verbose --workspace --all-features --all-targets --release
     - name: test
       run: cargo test --verbose --workspace --all-features --all-targets --release
+    - name: doc
+      run: cargo doc --verbose --workspace --all-features --no-deps --release
+    - name: doctest
+      run: cargo test --verbose --workspace --all-features --doc
