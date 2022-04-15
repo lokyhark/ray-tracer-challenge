@@ -2,7 +2,8 @@ use std::fmt::Display;
 
 use crate::{util::float_eq, Num};
 
-/// Point in the euclidian space (3-dimension).
+/// A geometric element of euclidian solid (three dimensional) space
+/// identifiable by a tuple of coordinates `(x,y,z)`.
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Point<Float: Num> {
     /// coordinate along the `x` axis
@@ -14,8 +15,8 @@ pub struct Point<Float: Num> {
 }
 
 impl<Float: Num> Point<Float> {
-    /// Creates a `Point` in euclidian space (3-dimension) from specified
-    /// coordinates.
+    /// Creates a `Point` in euclidian solid space (three-dimensional) from
+    /// specified coordinates.
     ///
     /// # Examples
     ///
@@ -27,7 +28,7 @@ impl<Float: Num> Point<Float> {
     /// assert_eq!(point.z, 3.0);
     /// ```
     pub fn new(x: Float, y: Float, z: Float) -> Self {
-        Point { x, y, z }
+        Self { x, y, z }
     }
 }
 
