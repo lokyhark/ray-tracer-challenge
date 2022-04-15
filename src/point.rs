@@ -71,6 +71,18 @@ impl<Float: Num> Sub for Point<Float> {
     }
 }
 
+impl<Float: Num> Sub<Vector<Float>> for Point<Float> {
+    type Output = Self;
+
+    fn sub(self, rhs: Vector<Float>) -> Self::Output {
+        Point {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -112,5 +124,13 @@ mod tests {
         let point2 = Point::new(1., 2., 3.);
         let result = Vector::new(1., 2., 3.);
         assert_eq!(point1 - point2, result)
+    }
+
+    #[test]
+    fn sub_vector() {
+        let point = Point::new(2., 4., 6.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(1., 2., 3.);
+        assert_eq!(point - vector, result)
     }
 }
