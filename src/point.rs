@@ -3,7 +3,7 @@ use std::fmt::Display;
 use crate::{util::float_eq, Num};
 
 /// Point in the euclidian space (3-dimension).
-#[derive(Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default)]
 pub struct Point<Float: Num> {
     /// coordinate along the `x` axis
     pub x: Float,
