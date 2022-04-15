@@ -56,6 +56,11 @@ impl<Float: Num> Vector<Float> {
             z: self.z / len,
         }
     }
+
+    /// Returns the dot product between `self` and `rhs`.
+    pub fn dot(&self, rhs: Vector<Float>) -> Float {
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
+    }
 }
 
 impl<Float: Num> Display for Vector<Float> {
@@ -238,5 +243,12 @@ mod tests {
         vector.normalize();
         assert_eq!(vector, result);
         assert!(float_eq(vector.len(), 1.));
+    }
+
+    #[test]
+    fn dot() {
+        let v1 = Vector::new(1., 2., 3.);
+        let v2 = Vector::new(2., 3., 4.);
+        assert!(float_eq(v1.dot(v2), 20.))
     }
 }
