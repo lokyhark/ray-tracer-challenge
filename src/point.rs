@@ -16,6 +16,16 @@ pub struct Point<Float: Num> {
 impl<Float: Num> Point<Float> {
     /// Creates a `Point` in euclidian space (3-dimension) from specified
     /// coordinates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Point;
+    /// let point = Point::new(1.0, 2.0, 3.0);
+    /// assert_eq!(point.x, 1.0);
+    /// assert_eq!(point.y, 2.0);
+    /// assert_eq!(point.z, 3.0);
+    /// ```
     pub fn new(x: Float, y: Float, z: Float) -> Self {
         Point { x, y, z }
     }
