@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Mul, Neg, Sub},
+    ops::{Add, Div, Mul, Neg, Sub},
 };
 
 use crate::{util::float_eq, Num};
@@ -95,6 +95,18 @@ impl<Float: Num> Mul<Float> for Vector<Float> {
     }
 }
 
+impl<Float: Num> Div<Float> for Vector<Float> {
+    type Output = Self;
+
+    fn div(self, rhs: Float) -> Self::Output {
+        Vector {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -150,5 +162,13 @@ mod tests {
         let scalar = 2.;
         let result = Vector::new(2., 4., 6.);
         assert_eq!(vector * scalar, result);
+    }
+
+    #[test]
+    fn div_scalar() {
+        let vector = Vector::new(2., 4., 6.);
+        let scalar = 2.;
+        let result = Vector::new(1., 2., 3.);
+        assert_eq!(vector / scalar, result);
     }
 }
