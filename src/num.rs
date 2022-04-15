@@ -15,6 +15,7 @@ pub trait Num:
     + Clone
     + Copy
     + Debug
+    + Default
     + Display
     + PartialEq
     + PartialOrd
