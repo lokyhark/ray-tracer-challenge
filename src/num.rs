@@ -1,17 +1,11 @@
 use std::{
     fmt::{Debug, Display},
-    ops::{Add, Div, Mul, Neg, Rem, Sub},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
 };
 
 /// Marker trait for floating point numeric numbers.
 pub trait Num:
-    Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + Rem<Output = Self>
-    + Neg<Output = Self>
-    + Sized
+    Sized
     + Clone
     + Copy
     + Debug
@@ -19,12 +13,26 @@ pub trait Num:
     + Display
     + PartialEq
     + PartialOrd
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Rem<Output = Self>
+    + Neg<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + RemAssign
 {
     /// Absolute value error for equality.
     const EPSILON: Self;
 
-    /// Computes the absolute value of `self`.
+    /// Returns the absolute value of `self`.
     fn abs(&self) -> Self;
+
+    /// Returns the square root of `self`.
+    fn sqrt(&self) -> Self;
 }
 
 impl Num for f32 {
@@ -33,6 +41,10 @@ impl Num for f32 {
     fn abs(&self) -> Self {
         Self::abs(*self)
     }
+
+    fn sqrt(&self) -> Self {
+        Self::sqrt(*self)
+    }
 }
 
 impl Num for f64 {
@@ -40,5 +52,9 @@ impl Num for f64 {
 
     fn abs(&self) -> Self {
         Self::abs(*self)
+    }
+
+    fn sqrt(&self) -> Self {
+        Self::sqrt(*self)
     }
 }

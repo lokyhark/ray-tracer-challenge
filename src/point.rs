@@ -1,9 +1,13 @@
-use std::fmt::Display;
+use std::{
+    fmt::Display,
+    ops::{Add, Sub},
+};
 
-use crate::{util::float_eq, Num};
+use crate::{util::float_eq, Num, Vector};
 
-/// Point in the euclidian space (3-dimension).
-#[derive(Clone, Debug, Default)]
+/// A geometric element of euclidian solid (three dimensional) space
+/// identifiable by a tuple of coordinates `(x,y,z)`.
+#[derive(Copy, Clone, Debug, Default)]
 pub struct Point<Float: Num> {
     /// coordinate along the `x` axis
     pub x: Float,
@@ -14,8 +18,8 @@ pub struct Point<Float: Num> {
 }
 
 impl<Float: Num> Point<Float> {
-    /// Creates a `Point` in euclidian space (3-dimension) from specified
-    /// coordinates.
+    /// Creates a `Point` in euclidian solid space (three-dimensional) from
+    /// specified coordinates.
     ///
     /// # Examples
     ///
@@ -27,7 +31,7 @@ impl<Float: Num> Point<Float> {
     /// assert_eq!(point.z, 3.0);
     /// ```
     pub fn new(x: Float, y: Float, z: Float) -> Self {
-        Point { x, y, z }
+        Self { x, y, z }
     }
 }
 
@@ -40,6 +44,42 @@ impl<Float: Num> Display for Point<Float> {
 impl<Float: Num> PartialEq for Point<Float> {
     fn eq(&self, other: &Self) -> bool {
         float_eq(self.x, other.x) && float_eq(self.y, other.y) && float_eq(self.z, other.z)
+    }
+}
+
+impl<Float: Num> Add<Vector<Float>> for Point<Float> {
+    type Output = Self;
+
+    fn add(self, rhs: Vector<Float>) -> Self::Output {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<Float: Num> Sub for Point<Float> {
+    type Output = Vector<Float>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vector {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<Float: Num> Sub<Vector<Float>> for Point<Float> {
+    type Output = Self;
+
+    fn sub(self, rhs: Vector<Float>) -> Self::Output {
+        Point {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
     }
 }
 
@@ -68,5 +108,29 @@ mod tests {
         let p1 = Point::new(1., 2., 3.);
         let p2 = Point::new(1.000_001, 2.000_001, 3.000_001);
         assert_eq!(p1, p2)
+    }
+
+    #[test]
+    fn add_vector() {
+        let point = Point::new(1., 2., 3.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(2., 4., 6.);
+        assert_eq!(point + vector, result);
+    }
+
+    #[test]
+    fn sub() {
+        let point1 = Point::new(2., 4., 6.);
+        let point2 = Point::new(1., 2., 3.);
+        let result = Vector::new(1., 2., 3.);
+        assert_eq!(point1 - point2, result)
+    }
+
+    #[test]
+    fn sub_vector() {
+        let point = Point::new(2., 4., 6.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(1., 2., 3.);
+        assert_eq!(point - vector, result)
     }
 }
