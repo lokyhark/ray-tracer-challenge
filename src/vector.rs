@@ -61,6 +61,15 @@ impl<Float: Num> Vector<Float> {
     pub fn dot(&self, rhs: Vector<Float>) -> Float {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
+
+    /// Returns the cross product between `self` and `rhs`.
+    pub fn cross(&self, rhs: Vector<Float>) -> Vector<Float> {
+        Vector {
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: self.z * rhs.x - self.x * rhs.z,
+            z: self.x * rhs.y - self.y * rhs.x,
+        }
+    }
 }
 
 impl<Float: Num> Display for Vector<Float> {
@@ -250,5 +259,20 @@ mod tests {
         let v1 = Vector::new(1., 2., 3.);
         let v2 = Vector::new(2., 3., 4.);
         assert!(float_eq(v1.dot(v2), 20.))
+    }
+
+    #[test]
+    fn cross() {
+        let v1 = Vector::new(1., 2., 3.);
+        let v2 = Vector::new(2., 3., 4.);
+        let result = Vector::new(-1., 2., -1.);
+        assert_eq!(v1.cross(v2), result);
+        assert_eq!(v2.cross(v1), -result);
+        let x = Vector::new(1., 0., 0.);
+        let y = Vector::new(0., 1., 0.);
+        let z = Vector::new(0., 0., 1.);
+        assert_eq!(x.cross(y), z);
+        assert_eq!(y.cross(z), x);
+        assert_eq!(z.cross(x), y);
     }
 }
