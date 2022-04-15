@@ -1,4 +1,7 @@
-use std::{fmt::Display, ops::Add};
+use std::{
+    fmt::Display,
+    ops::{Add, Sub},
+};
 
 use crate::{util::float_eq, Num};
 
@@ -56,6 +59,18 @@ impl<Float: Num> Add for Vector<Float> {
     }
 }
 
+impl<Float: Num> Sub for Vector<Float> {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vector {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -84,9 +99,17 @@ mod tests {
     }
 
     #[test]
-    fn add_vector() {
+    fn add() {
         let vector = Vector::new(1., 2., 3.);
         let result = Vector::new(2., 4., 6.);
         assert_eq!(vector + vector, result);
+    }
+
+    #[test]
+    fn sub() {
+        let vector1 = Vector::new(2., 4., 6.);
+        let vector2 = Vector::new(1., 2., 3.);
+        let result = Vector::new(1., 2., 3.);
+        assert_eq!(vector1 - vector2, result);
     }
 }
