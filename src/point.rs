@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::Num;
+use crate::{util::float_eq, Num};
 
 /// Point in the euclidian space (3-dimension).
 #[derive(Clone, Debug, Default)]
@@ -27,6 +27,12 @@ impl<Float: Num> Display for Point<Float> {
     }
 }
 
+impl<Float: Num> PartialEq for Point<Float> {
+    fn eq(&self, other: &Self) -> bool {
+        float_eq(self.x, other.x) && float_eq(self.y, other.y) && float_eq(self.z, other.z)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -45,5 +51,12 @@ mod tests {
     fn display() {
         let point = Point::new(1.1, 2.2, 3.3);
         assert_eq!(point.to_string(), "(1.1,2.2,3.3)");
+    }
+
+    #[test]
+    fn partial_eq() {
+        let p1 = Point::new(1., 2., 3.);
+        let p2 = Point::new(1.000_001, 2.000_001, 3.000_001);
+        assert_eq!(p1, p2)
     }
 }
