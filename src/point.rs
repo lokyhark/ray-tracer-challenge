@@ -1,6 +1,6 @@
-use std::fmt::Display;
+use std::{fmt::Display, ops::Add};
 
-use crate::{util::float_eq, Num};
+use crate::{util::float_eq, Num, Vector};
 
 /// A geometric element of euclidian solid (three dimensional) space
 /// identifiable by a tuple of coordinates `(x,y,z)`.
@@ -44,6 +44,18 @@ impl<Float: Num> PartialEq for Point<Float> {
     }
 }
 
+impl<Float: Num> Add<Vector<Float>> for Point<Float> {
+    type Output = Self;
+
+    fn add(self, rhs: Vector<Float>) -> Self::Output {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -69,5 +81,13 @@ mod tests {
         let p1 = Point::new(1., 2., 3.);
         let p2 = Point::new(1.000_001, 2.000_001, 3.000_001);
         assert_eq!(p1, p2)
+    }
+
+    #[test]
+    fn add_vector() {
+        let point = Point::new(1., 2., 3.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(2., 4., 6.);
+        assert_eq!(point + vector, result);
     }
 }
