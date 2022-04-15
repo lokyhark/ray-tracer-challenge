@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Sub},
+    ops::{Add, Neg, Sub},
 };
 
 use crate::{util::float_eq, Num};
@@ -71,6 +71,18 @@ impl<Float: Num> Sub for Vector<Float> {
     }
 }
 
+impl<Float: Num> Neg for Vector<Float> {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Vector {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -111,5 +123,12 @@ mod tests {
         let vector2 = Vector::new(1., 2., 3.);
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector1 - vector2, result);
+    }
+
+    #[test]
+    fn neg() {
+        let vector = Vector::new(1., 2., 3.);
+        let result = Vector::new(-1., -2., -3.);
+        assert_eq!(-vector, result);
     }
 }
