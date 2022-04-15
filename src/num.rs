@@ -20,8 +20,10 @@ pub trait Num:
     + PartialEq
     + PartialOrd
 {
+    /// Absolute value error for equality.
     const EPSILON: Self;
 
+    /// Computes the absolute value of `self`.
     fn abs(&self) -> Self;
 }
 
@@ -32,6 +34,7 @@ impl Num for f32 {
         Self::abs(*self)
     }
 }
+
 impl Num for f64 {
     const EPSILON: Self = 1.0e-5_f64;
 
