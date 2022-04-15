@@ -1,17 +1,11 @@
 use std::{
     fmt::{Debug, Display},
-    ops::{Add, Div, Mul, Neg, Rem, Sub},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
 };
 
 /// Marker trait for floating point numeric numbers.
 pub trait Num:
-    Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + Rem<Output = Self>
-    + Neg<Output = Self>
-    + Sized
+    Sized
     + Clone
     + Copy
     + Debug
@@ -19,6 +13,17 @@ pub trait Num:
     + Display
     + PartialEq
     + PartialOrd
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Rem<Output = Self>
+    + Neg<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + RemAssign
 {
     /// Absolute value error for equality.
     const EPSILON: Self;

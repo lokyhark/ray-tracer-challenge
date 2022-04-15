@@ -38,6 +38,24 @@ impl<Float: Num> Vector<Float> {
     pub fn len(&self) -> Float {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
+
+    /// Normalizes the vector.
+    pub fn normalize(&mut self) {
+        let len = self.len();
+        self.x /= len;
+        self.y /= len;
+        self.z /= len;
+    }
+
+    /// Returns normalized version of the vector.
+    pub fn normalized(&self) -> Self {
+        let len = self.len();
+        Vector {
+            x: self.x / len,
+            y: self.y / len,
+            z: self.z / len,
+        }
+    }
 }
 
 impl<Float: Num> Display for Vector<Float> {
@@ -189,5 +207,36 @@ mod tests {
         assert!(float_eq(vector.len(), 14.0.sqrt()));
         let vector = Vector::new(-1., -2., -3.);
         assert!(float_eq(vector.len(), 14.0.sqrt()));
+    }
+
+    #[test]
+    fn normalization() {
+        let mut vector = Vector::new(2., 0., 0.);
+        let result = Vector::new(1., 0., 0.);
+        assert_eq!(vector.normalized(), result);
+        vector.normalize();
+        assert_eq!(vector, result);
+        assert!(float_eq(vector.len(), 1.));
+
+        let mut vector = Vector::new(0., 2., 0.);
+        let result = Vector::new(0., 1., 0.);
+        assert_eq!(vector.normalized(), result);
+        vector.normalize();
+        assert_eq!(vector, result);
+        assert!(float_eq(vector.len(), 1.));
+
+        let mut vector = Vector::new(0., 0., 2.);
+        let result = Vector::new(0., 0., 1.);
+        assert_eq!(vector.normalized(), result);
+        vector.normalize();
+        assert_eq!(vector, result);
+        assert!(float_eq(vector.len(), 1.));
+
+        let mut vector = Vector::new(1., 2., 3.);
+        let result = Vector::new(1. / 14.0.sqrt(), 2. / 14.0.sqrt(), 3. / 14.0.sqrt());
+        assert_eq!(vector.normalized(), result);
+        vector.normalize();
+        assert_eq!(vector, result);
+        assert!(float_eq(vector.len(), 1.));
     }
 }
