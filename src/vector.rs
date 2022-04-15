@@ -33,6 +33,11 @@ impl<Float: Num> Vector<Float> {
     pub fn new(x: Float, y: Float, z: Float) -> Self {
         Self { x, y, z }
     }
+
+    /// Returns the length/magniture of the vector.
+    pub fn len(&self) -> Float {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+    }
 }
 
 impl<Float: Num> Display for Vector<Float> {
@@ -170,5 +175,19 @@ mod tests {
         let scalar = 2.;
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector / scalar, result);
+    }
+
+    #[test]
+    fn len() {
+        let vector = Vector::new(1., 0., 0.);
+        assert!(float_eq(vector.len(), 1.));
+        let vector = Vector::new(0., 1., 0.);
+        assert!(float_eq(vector.len(), 1.));
+        let vector = Vector::new(0., 0., 1.);
+        assert!(float_eq(vector.len(), 1.));
+        let vector = Vector::new(1., 2., 3.);
+        assert!(float_eq(vector.len(), 14.0.sqrt()));
+        let vector = Vector::new(-1., -2., -3.);
+        assert!(float_eq(vector.len(), 14.0.sqrt()));
     }
 }

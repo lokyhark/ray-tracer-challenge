@@ -23,8 +23,11 @@ pub trait Num:
     /// Absolute value error for equality.
     const EPSILON: Self;
 
-    /// Computes the absolute value of `self`.
+    /// Returns the absolute value of `self`.
     fn abs(&self) -> Self;
+
+    /// Returns the square root of `self`.
+    fn sqrt(&self) -> Self;
 }
 
 impl Num for f32 {
@@ -33,6 +36,10 @@ impl Num for f32 {
     fn abs(&self) -> Self {
         Self::abs(*self)
     }
+
+    fn sqrt(&self) -> Self {
+        Self::sqrt(*self)
+    }
 }
 
 impl Num for f64 {
@@ -40,5 +47,9 @@ impl Num for f64 {
 
     fn abs(&self) -> Self {
         Self::abs(*self)
+    }
+
+    fn sqrt(&self) -> Self {
+        Self::sqrt(*self)
     }
 }
