@@ -3,21 +3,21 @@ use std::{
     ops::{Add, Sub},
 };
 
-use crate::{util::float_eq, Num, Vector};
+use crate::{util::float_eq, Vector};
 
-/// A geometric element of euclidian solid (three dimensional) space
-/// identifiable by a tuple of coordinates `(x,y,z)`.
+/// Geometric element of euclidian space identifiable by a tuple of coordinates
+/// `(x,y,z)`.
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Point<Float: Num> {
+pub struct Point {
     /// coordinate along the `x` axis
-    pub x: Float,
+    pub x: f64,
     /// coordinate along the `y` axis
-    pub y: Float,
+    pub y: f64,
     /// coordinate along the `z` axis
-    pub z: Float,
+    pub z: f64,
 }
 
-impl<Float: Num> Point<Float> {
+impl Point {
     /// Creates a `Point` in euclidian solid space (three-dimensional) from
     /// specified coordinates.
     ///
@@ -30,27 +30,27 @@ impl<Float: Num> Point<Float> {
     /// assert_eq!(point.y, 2.0);
     /// assert_eq!(point.z, 3.0);
     /// ```
-    pub fn new(x: Float, y: Float, z: Float) -> Self {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
 }
 
-impl<Float: Num> Display for Point<Float> {
+impl Display for Point {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.write_fmt(format_args!("({},{},{})", self.x, self.y, self.z))
     }
 }
 
-impl<Float: Num> PartialEq for Point<Float> {
+impl PartialEq for Point {
     fn eq(&self, other: &Self) -> bool {
         float_eq(self.x, other.x) && float_eq(self.y, other.y) && float_eq(self.z, other.z)
     }
 }
 
-impl<Float: Num> Add<Vector<Float>> for Point<Float> {
+impl Add<Vector> for Point {
     type Output = Self;
 
-    fn add(self, rhs: Vector<Float>) -> Self::Output {
+    fn add(self, rhs: Vector) -> Self::Output {
         Point {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
@@ -59,8 +59,8 @@ impl<Float: Num> Add<Vector<Float>> for Point<Float> {
     }
 }
 
-impl<Float: Num> Sub for Point<Float> {
-    type Output = Vector<Float>;
+impl Sub for Point {
+    type Output = Vector;
 
     fn sub(self, rhs: Self) -> Self::Output {
         Vector {
@@ -71,10 +71,10 @@ impl<Float: Num> Sub for Point<Float> {
     }
 }
 
-impl<Float: Num> Sub<Vector<Float>> for Point<Float> {
+impl Sub<Vector> for Point {
     type Output = Self;
 
-    fn sub(self, rhs: Vector<Float>) -> Self::Output {
+    fn sub(self, rhs: Vector) -> Self::Output {
         Point {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
