@@ -7,6 +7,9 @@
 
 pub(crate) mod util;
 
+mod color;
+pub use color::Color;
+
 mod point;
 pub use point::Point;
 
