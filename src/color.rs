@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, AddAssign, Sub, SubAssign},
+    ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign},
 };
 
 use crate::util::float_eq;
@@ -79,6 +79,26 @@ impl SubAssign for Color {
     }
 }
 
+impl Mul<f64> for Color {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Color {
+            r: self.r * rhs,
+            g: self.g * rhs,
+            b: self.b * rhs,
+        }
+    }
+}
+
+impl MulAssign<f64> for Color {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.r *= rhs;
+        self.g *= rhs;
+        self.b *= rhs;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -91,6 +111,13 @@ mod tests {
         assert!(float_eq(color.r, -0.5));
         assert!(float_eq(color.g, 0.4));
         assert!(float_eq(color.b, 1.7));
+    }
+
+    #[test]
+    fn eq() {
+        let color1 = Color::new(1., 2., 3.);
+        let color2 = Color::new(1.000_001, 2.000_001, 3.000_001);
+        assert_eq!(color1, color2);
     }
 
     #[test]
@@ -125,5 +152,22 @@ mod tests {
         let result = Color::new(1., 2., 3.);
         color1 -= color2;
         assert_eq!(color1, result);
+    }
+
+    #[test]
+    fn mul_scalar() {
+        let color = Color::new(1., 2., 3.);
+        let scalar = 2.;
+        let result = Color::new(2., 4., 6.);
+        assert_eq!(color * scalar, result);
+    }
+
+    #[test]
+    fn mul_scalar_assign() {
+        let mut color = Color::new(1., 2., 3.);
+        let scalar = 2.;
+        let result = Color::new(2., 4., 6.);
+        color *= scalar;
+        assert_eq!(color, result);
     }
 }
