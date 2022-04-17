@@ -1,6 +1,6 @@
 use std::ops::Mul;
 
-use crate::{util::float_eq, Vector};
+use crate::{util::float_eq, Point, Vector};
 
 /// Matrix 4x4.
 #[derive(Clone, Debug)]
@@ -10,7 +10,7 @@ pub struct Matrix {
 
 impl Matrix {
     /// Creates a new matrix from specified elements
-    pub fn new(elements: [f64; 16]) -> Self {
+    pub const fn new(elements: [f64; 16]) -> Self {
         Self { elements }
     }
 
@@ -63,6 +63,26 @@ impl Mul<Vector> for Matrix {
         let y = self.get(1, 0) * rhs.x + self.get(1, 1) * rhs.y + self.get(1, 2) * rhs.z;
         let z = self.get(2, 0) * rhs.x + self.get(2, 1) * rhs.y + self.get(2, 2) * rhs.z;
         Vector::new(x, y, z)
+    }
+}
+
+impl Mul<Point> for Matrix {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Self::Output {
+        let x = self.get(0, 0) * rhs.x
+            + self.get(0, 1) * rhs.y
+            + self.get(0, 2) * rhs.z
+            + self.get(0, 3);
+        let y = self.get(1, 0) * rhs.x
+            + self.get(1, 1) * rhs.y
+            + self.get(1, 2) * rhs.z
+            + self.get(1, 3);
+        let z = self.get(2, 0) * rhs.x
+            + self.get(2, 1) * rhs.y
+            + self.get(2, 2) * rhs.z
+            + self.get(2, 3);
+        Point::new(x, y, z)
     }
 }
 
@@ -133,5 +153,15 @@ mod tests {
         let v = Vector::new(1., 2., 3.);
         let result = Vector::new(14., 22., 32.);
         assert_eq!(a * v, result);
+    }
+
+    #[test]
+    fn mul_point() {
+        let a = Matrix::new([
+            1., 2., 3., 4., 2., 4., 4., 2., 8., 6., 4., 1., 0., 0., 0., 1.,
+        ]);
+        let p = Point::new(1., 2., 3.);
+        let result = Point::new(18., 24., 33.);
+        assert_eq!(a * p, result);
     }
 }
