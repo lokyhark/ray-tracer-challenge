@@ -70,6 +70,14 @@ impl Color {
             b: 1.,
         }
     }
+
+    /// Converts color to u8 tuple.
+    pub fn as_tuple(&self) -> (u8, u8, u8) {
+        let r = (self.r.clamp(0., 1.) * 255.).round() as u8;
+        let g = (self.g.clamp(0., 1.) * 255.).round() as u8;
+        let b = (self.b.clamp(0., 1.) * 255.).round() as u8;
+        (r, g, b)
+    }
 }
 
 impl Display for Color {
