@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Div, Mul, Neg, Sub},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 use crate::util::float_eq;
@@ -96,6 +96,14 @@ impl Add for Vector {
     }
 }
 
+impl AddAssign for Vector {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
 impl Sub for Vector {
     type Output = Self;
 
@@ -105,6 +113,14 @@ impl Sub for Vector {
             y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
+    }
+}
+
+impl SubAssign for Vector {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+        self.z -= rhs.z;
     }
 }
 
@@ -132,6 +148,14 @@ impl Mul<f64> for Vector {
     }
 }
 
+impl MulAssign<f64> for Vector {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
+    }
+}
+
 impl Div<f64> for Vector {
     type Output = Self;
 
@@ -141,6 +165,14 @@ impl Div<f64> for Vector {
             y: self.y / rhs,
             z: self.z / rhs,
         }
+    }
+}
+
+impl DivAssign<f64> for Vector {
+    fn div_assign(&mut self, rhs: f64) {
+        self.x /= rhs;
+        self.y /= rhs;
+        self.z /= rhs;
     }
 }
 
@@ -179,11 +211,28 @@ mod tests {
     }
 
     #[test]
+    fn add_assign() {
+        let mut vector = Vector::new(1., 2., 3.);
+        let result = Vector::new(2., 4., 6.);
+        vector += vector;
+        assert_eq!(vector, result);
+    }
+
+    #[test]
     fn sub() {
         let vector1 = Vector::new(2., 4., 6.);
         let vector2 = Vector::new(1., 2., 3.);
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector1 - vector2, result);
+    }
+
+    #[test]
+    fn sub_assign() {
+        let mut vector1 = Vector::new(2., 4., 6.);
+        let vector2 = Vector::new(1., 2., 3.);
+        let result = Vector::new(1., 2., 3.);
+        vector1 -= vector2;
+        assert_eq!(vector1, result);
     }
 
     #[test]
@@ -202,11 +251,29 @@ mod tests {
     }
 
     #[test]
+    fn mul_assign_scalar() {
+        let mut vector = Vector::new(1., 2., 3.);
+        let scalar = 2.;
+        let result = Vector::new(2., 4., 6.);
+        vector *= scalar;
+        assert_eq!(vector, result);
+    }
+
+    #[test]
     fn div_scalar() {
         let vector = Vector::new(2., 4., 6.);
         let scalar = 2.;
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector / scalar, result);
+    }
+
+    #[test]
+    fn div_assign_scalar() {
+        let mut vector = Vector::new(2., 4., 6.);
+        let scalar = 2.;
+        let result = Vector::new(1., 2., 3.);
+        vector /= scalar;
+        assert_eq!(vector, result);
     }
 
     #[test]

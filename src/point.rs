@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Sub},
+    ops::{Add, AddAssign, Sub, SubAssign},
 };
 
 use crate::{util::float_eq, Vector};
@@ -59,6 +59,14 @@ impl Add<Vector> for Point {
     }
 }
 
+impl AddAssign<Vector> for Point {
+    fn add_assign(&mut self, rhs: Vector) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
 impl Sub for Point {
     type Output = Vector;
 
@@ -80,6 +88,14 @@ impl Sub<Vector> for Point {
             y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
+    }
+}
+
+impl SubAssign<Vector> for Point {
+    fn sub_assign(&mut self, rhs: Vector) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+        self.z -= rhs.z
     }
 }
 
@@ -119,11 +135,29 @@ mod tests {
     }
 
     #[test]
+    fn add_assign_vector() {
+        let mut point = Point::new(1., 2., 3.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(2., 4., 6.);
+        point += vector;
+        assert_eq!(point, result);
+    }
+
+    #[test]
     fn sub() {
         let point1 = Point::new(2., 4., 6.);
         let point2 = Point::new(1., 2., 3.);
         let result = Vector::new(1., 2., 3.);
         assert_eq!(point1 - point2, result)
+    }
+
+    #[test]
+    fn sub_assign_vector() {
+        let mut point = Point::new(2., 4., 6.);
+        let vector = Vector::new(1., 2., 3.);
+        let result = Point::new(1., 2., 3.);
+        point -= vector;
+        assert_eq!(point, result);
     }
 
     #[test]
