@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, AddAssign},
+    ops::{Add, AddAssign, Sub, SubAssign},
 };
 
 use crate::util::float_eq;
@@ -59,6 +59,26 @@ impl AddAssign for Color {
     }
 }
 
+impl Sub for Color {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Color {
+            r: self.r - rhs.r,
+            g: self.g - rhs.g,
+            b: self.b - rhs.b,
+        }
+    }
+}
+
+impl SubAssign for Color {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.r -= rhs.r;
+        self.g -= rhs.g;
+        self.b -= rhs.b;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -87,6 +107,23 @@ mod tests {
         let color2 = Color::new(2., 3., 4.);
         let result = Color::new(3., 5., 7.);
         color1 += color2;
+        assert_eq!(color1, result);
+    }
+
+    #[test]
+    fn sub() {
+        let color1 = Color::new(2., 4., 6.);
+        let color2 = Color::new(1., 2., 3.);
+        let result = Color::new(1., 2., 3.);
+        assert_eq!(color1 - color2, result);
+    }
+
+    #[test]
+    fn sub_assign() {
+        let mut color1 = Color::new(2., 4., 6.);
+        let color2 = Color::new(1., 2., 3.);
+        let result = Color::new(1., 2., 3.);
+        color1 -= color2;
         assert_eq!(color1, result);
     }
 }
