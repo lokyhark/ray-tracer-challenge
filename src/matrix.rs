@@ -1,3 +1,5 @@
+use std::ops::Mul;
+
 use crate::util::float_eq;
 
 /// Matrix 4x4.
@@ -33,6 +35,23 @@ impl PartialEq for Matrix {
             .iter()
             .zip(other.elements.iter())
             .all(|(&a, &b)| float_eq(a, b))
+    }
+}
+
+impl Mul for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        let mut elements = [0.; 16];
+        for row in 0..4 {
+            for col in 0..4 {
+                elements[row * 4 + col] = self.get(row, 0) * rhs.get(0, col)
+                    + self.get(row, 1) * rhs.get(1, col)
+                    + self.get(row, 2) * rhs.get(2, col)
+                    + self.get(row, 3) * rhs.get(3, col);
+            }
+        }
+        Matrix { elements }
     }
 }
 
@@ -78,5 +97,20 @@ mod tests {
         ]);
         assert_eq!(a, b);
         assert_ne!(a, c);
+    }
+
+    #[test]
+    fn mul() {
+        let a = Matrix::new([
+            1., 2., 3., 4., 5., 6., 7., 8., 9., 8., 7., 6., 5., 4., 3., 2.,
+        ]);
+        let b = Matrix::new([
+            -2., 1., 2., 3., 3., 2., 1., -1., 4., 3., 6., 5., 1., 2., 7., 8.,
+        ]);
+        let c = Matrix::new([
+            20., 22., 50., 48., 44., 54., 114., 108., 40., 58., 110., 102., 16., 26., 46., 42.,
+        ]);
+
+        assert_eq!(a * b, c);
     }
 }
