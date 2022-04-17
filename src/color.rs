@@ -119,6 +119,16 @@ impl MulAssign for Color {
     }
 }
 
+impl From<(f64, f64, f64)> for Color {
+    fn from(tuple: (f64, f64, f64)) -> Self {
+        Self {
+            r: tuple.0,
+            g: tuple.1,
+            b: tuple.2,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -127,10 +137,18 @@ mod tests {
 
     #[test]
     fn new() {
-        let color = Color::new(-0.5, 0.4, 1.7);
-        assert!(float_eq(color.r, -0.5));
-        assert!(float_eq(color.g, 0.4));
-        assert!(float_eq(color.b, 1.7));
+        let color = Color::new(1., 2., 3.);
+        assert!(float_eq(color.r, 1.));
+        assert!(float_eq(color.g, 2.));
+        assert!(float_eq(color.b, 3.));
+    }
+
+    #[test]
+    fn from() {
+        let color: Color = (1., 2., 3.).into();
+        assert!(float_eq(color.r, 1.));
+        assert!(float_eq(color.g, 2.));
+        assert!(float_eq(color.b, 3.));
     }
 
     #[test]

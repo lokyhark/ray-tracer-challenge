@@ -99,6 +99,16 @@ impl SubAssign<Vector> for Point {
     }
 }
 
+impl From<(f64, f64, f64)> for Point {
+    fn from(tuple: (f64, f64, f64)) -> Self {
+        Self {
+            x: tuple.0,
+            y: tuple.1,
+            z: tuple.2,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -108,6 +118,14 @@ mod tests {
     #[test]
     fn new() {
         let point = Point::new(1., 2., 3.);
+        assert!(float_eq(point.x, 1.));
+        assert!(float_eq(point.y, 2.));
+        assert!(float_eq(point.z, 3.));
+    }
+
+    #[test]
+    fn from() {
+        let point: Point = (1., 2., 3.).into();
         assert!(float_eq(point.x, 1.));
         assert!(float_eq(point.y, 2.));
         assert!(float_eq(point.z, 3.));

@@ -176,6 +176,16 @@ impl DivAssign<f64> for Vector {
     }
 }
 
+impl From<(f64, f64, f64)> for Vector {
+    fn from(tuple: (f64, f64, f64)) -> Self {
+        Self {
+            x: tuple.0,
+            y: tuple.1,
+            z: tuple.2,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -185,6 +195,14 @@ mod tests {
     #[test]
     fn new() {
         let vector = Vector::new(1., 2., 3.);
+        assert!(float_eq(vector.x, 1.));
+        assert!(float_eq(vector.y, 2.));
+        assert!(float_eq(vector.z, 3.));
+    }
+
+    #[test]
+    fn from() {
+        let vector: Vector = (1., 2., 3.).into();
         assert!(float_eq(vector.x, 1.));
         assert!(float_eq(vector.y, 2.));
         assert!(float_eq(vector.z, 3.));
