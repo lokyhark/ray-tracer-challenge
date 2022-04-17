@@ -13,6 +13,9 @@ pub use canvas::Canvas;
 mod color;
 pub use color::Color;
 
+mod matrix;
+pub use matrix::Matrix;
+
 mod point;
 pub use point::Point;
 
