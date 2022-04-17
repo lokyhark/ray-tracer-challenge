@@ -22,6 +22,15 @@ impl Canvas {
         }
     }
 
+    /// Creates a canvas of specified size `(width, height)` and color.
+    pub fn with_color(width: usize, height: usize, color: Color) -> Self {
+        Canvas {
+            width,
+            height,
+            pixels: vec![color; width * height],
+        }
+    }
+
     /// Returns [`Color`] of specified pixel.
     pub fn get(&self, x: usize, y: usize) -> Option<&Color> {
         let index = x + y * self.width;

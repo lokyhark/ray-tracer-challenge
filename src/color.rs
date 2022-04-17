@@ -18,7 +18,7 @@ pub struct Color {
 
 impl Color {
     /// Creates a new color from specified `(red, green, blue)`
-    pub fn new(red: f64, green: f64, blue: f64) -> Self {
+    pub const fn new(red: f64, green: f64, blue: f64) -> Self {
         Color {
             r: red,
             g: green,
@@ -27,7 +27,7 @@ impl Color {
     }
 
     /// Creates black color.
-    pub fn black() -> Self {
+    pub const fn black() -> Self {
         Color {
             r: 0.,
             g: 0.,
@@ -36,7 +36,7 @@ impl Color {
     }
 
     /// Creates white color.
-    pub fn white() -> Self {
+    pub const fn white() -> Self {
         Color {
             r: 1.,
             g: 1.,
@@ -45,7 +45,7 @@ impl Color {
     }
 
     /// Creates red color.
-    pub fn red() -> Self {
+    pub const fn red() -> Self {
         Color {
             r: 1.,
             g: 0.,
@@ -54,7 +54,7 @@ impl Color {
     }
 
     /// Creates green color.
-    pub fn green() -> Self {
+    pub const fn green() -> Self {
         Color {
             r: 0.,
             g: 1.,
@@ -63,7 +63,7 @@ impl Color {
     }
 
     /// Creates blue color.
-    pub fn blue() -> Self {
+    pub const fn blue() -> Self {
         Color {
             r: 0.,
             g: 0.,
