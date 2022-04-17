@@ -1,6 +1,6 @@
 use std::ops::Mul;
 
-use crate::util::float_eq;
+use crate::{util::float_eq, Vector};
 
 /// Matrix 4x4.
 #[derive(Clone, Debug)]
@@ -52,6 +52,17 @@ impl Mul for Matrix {
             }
         }
         Matrix { elements }
+    }
+}
+
+impl Mul<Vector> for Matrix {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        let x = self.get(0, 0) * rhs.x + self.get(0, 1) * rhs.y + self.get(0, 2) * rhs.z;
+        let y = self.get(1, 0) * rhs.x + self.get(1, 1) * rhs.y + self.get(1, 2) * rhs.z;
+        let z = self.get(2, 0) * rhs.x + self.get(2, 1) * rhs.y + self.get(2, 2) * rhs.z;
+        Vector::new(x, y, z)
     }
 }
 
@@ -112,5 +123,15 @@ mod tests {
         ]);
 
         assert_eq!(a * b, c);
+    }
+
+    #[test]
+    fn mul_vector() {
+        let a = Matrix::new([
+            1., 2., 3., 4., 2., 4., 4., 2., 8., 6., 4., 1., 0., 0., 0., 1.,
+        ]);
+        let v = Vector::new(1., 2., 3.);
+        let result = Vector::new(14., 22., 32.);
+        assert_eq!(a * v, result);
     }
 }
