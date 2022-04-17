@@ -99,6 +99,26 @@ impl MulAssign<f64> for Color {
     }
 }
 
+impl Mul for Color {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Color {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b,
+        }
+    }
+}
+
+impl MulAssign for Color {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.r *= rhs.r;
+        self.g *= rhs.g;
+        self.b *= rhs.b;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::util::float_eq;
@@ -169,5 +189,22 @@ mod tests {
         let result = Color::new(2., 4., 6.);
         color *= scalar;
         assert_eq!(color, result);
+    }
+
+    #[test]
+    fn mul() {
+        let color1 = Color::new(1., 0.2, 0.4);
+        let color2 = Color::new(0.9, 1., 0.1);
+        let result = Color::new(0.9, 0.2, 0.04);
+        assert_eq!(color1 * color2, result);
+    }
+
+    #[test]
+    fn mul_assign() {
+        let mut color1 = Color::new(1., 0.2, 0.4);
+        let color2 = Color::new(0.9, 1., 0.1);
+        let result = Color::new(0.9, 0.2, 0.04);
+        color1 *= color2;
+        assert_eq!(color1, result);
     }
 }
