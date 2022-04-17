@@ -3,15 +3,24 @@ use std::ops::Mul;
 use crate::{util::float_eq, Point, Vector};
 
 /// Matrix 4x4.
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Matrix {
     elements: [f64; 16],
 }
 
 impl Matrix {
+    const IDENTITY: Self = Self::new([
+        1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.,
+    ]);
+
     /// Creates a new matrix from specified elements
     pub const fn new(elements: [f64; 16]) -> Self {
         Self { elements }
+    }
+
+    /// Returns identity matrix
+    pub const fn identity() -> Self {
+        Self::IDENTITY
     }
 
     /// Get element.
@@ -163,5 +172,13 @@ mod tests {
         let p = Point::new(1., 2., 3.);
         let result = Point::new(18., 24., 33.);
         assert_eq!(a * p, result);
+    }
+
+    #[test]
+    fn identity() {
+        let a = Matrix::new([
+            0., 1., 2., 4., 1., 2., 4., 8., 2., 4., 8., 16., 4., 8., 16., 32.,
+        ]);
+        assert_eq!(a * Matrix::identity(), a);
     }
 }
