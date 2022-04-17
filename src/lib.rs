@@ -7,6 +7,9 @@
 
 pub(crate) mod util;
 
+mod canvas;
+pub use canvas::Canvas;
+
 mod color;
 pub use color::Color;
 

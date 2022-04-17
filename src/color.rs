@@ -5,7 +5,7 @@ use std::{
 
 use crate::util::float_eq;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Default)]
 /// Color identified by `(red, green, blue)` tuple.
 pub struct Color {
     /// red
@@ -23,6 +23,51 @@ impl Color {
             r: red,
             g: green,
             b: blue,
+        }
+    }
+
+    /// Creates black color.
+    pub fn black() -> Self {
+        Color {
+            r: 0.,
+            g: 0.,
+            b: 0.,
+        }
+    }
+
+    /// Creates white color.
+    pub fn white() -> Self {
+        Color {
+            r: 1.,
+            g: 1.,
+            b: 1.,
+        }
+    }
+
+    /// Creates red color.
+    pub fn red() -> Self {
+        Color {
+            r: 1.,
+            g: 0.,
+            b: 0.,
+        }
+    }
+
+    /// Creates green color.
+    pub fn green() -> Self {
+        Color {
+            r: 0.,
+            g: 1.,
+            b: 0.,
+        }
+    }
+
+    /// Creates blue color.
+    pub fn blue() -> Self {
+        Color {
+            r: 0.,
+            g: 0.,
+            b: 1.,
         }
     }
 }
