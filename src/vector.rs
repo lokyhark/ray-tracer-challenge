@@ -35,11 +35,29 @@ impl Vector {
     }
 
     /// Returns the length/magniture of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let vector = Vector::new(1., 2., 3.);
+    /// assert_eq!(vector.len(), 14_f64.sqrt());
+    /// ```
     pub fn len(&self) -> f64 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     /// Normalizes the vector.
+    ///
+    /// # Examples
+    ///  
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let mut vector = Vector::new(4., 0., 0.);
+    /// let normal = Vector::new(1., 0., 0.);
+    /// vector.normalize();
+    /// assert_eq!(vector, normal);
+    /// ```
     pub fn normalize(&mut self) {
         let len = self.len();
         self.x /= len;
@@ -48,6 +66,16 @@ impl Vector {
     }
 
     /// Returns normalized version of the vector.
+    ///
+    /// # Examples
+    ///  
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let vector = Vector::new(4., 0., 0.);
+    /// let actual = vector.normalized();
+    /// let expected = Vector::new(1., 0., 0.);
+    /// assert_eq!(actual, expected);
+    /// ```
     pub fn normalized(&self) -> Self {
         let len = self.len();
         Vector {
@@ -58,11 +86,30 @@ impl Vector {
     }
 
     /// Returns the dot product between `self` and `rhs`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let a = Vector::new(1., 2., 3.);
+    /// let b = Vector::new(2., 3., 4.);
+    /// assert_eq!(a.dot(b), 20.);
+    /// ```
     pub fn dot(&self, rhs: Vector) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 
     /// Returns the cross product between `self` and `rhs`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let a = Vector::new(1., 2., 3.);
+    /// let b = Vector::new(2., 3., 4.);
+    /// assert_eq!(a.cross(b), Vector::new(-1., 2., -1.));
+    /// assert_eq!(b.cross(a), Vector::new(1., -2., 1.));
+    /// ```
     pub fn cross(&self, rhs: Vector) -> Vector {
         Vector {
             x: self.y * rhs.z - self.z * rhs.y,

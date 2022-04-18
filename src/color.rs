@@ -18,6 +18,16 @@ pub struct Color {
 
 impl Color {
     /// Creates a new color from specified `(red, green, blue)`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Color;
+    /// let color = Color::new(-0.5, 0.4, 1.7);
+    /// assert_eq!(color.r, -0.5);
+    /// assert_eq!(color.g, 0.4);
+    /// assert_eq!(color.b, 1.7);
+    /// ```
     pub const fn new(red: f64, green: f64, blue: f64) -> Self {
         Color {
             r: red,
@@ -26,52 +36,65 @@ impl Color {
         }
     }
 
-    /// Creates black color.
+    /// Creates black color `(0., 0., 0.)`.
     pub const fn black() -> Self {
-        Color {
+        const COLOR: Color = Color {
             r: 0.,
             g: 0.,
             b: 0.,
-        }
+        };
+        COLOR
     }
 
-    /// Creates white color.
+    /// Creates white color `(1., 1., 1.)`.
     pub const fn white() -> Self {
-        Color {
+        const COLOR: Color = Color {
             r: 1.,
             g: 1.,
             b: 1.,
-        }
+        };
+        COLOR
     }
 
-    /// Creates red color.
+    /// Creates red color `(1., 0., 0.)`.
     pub const fn red() -> Self {
-        Color {
+        const COLOR: Color = Color {
             r: 1.,
             g: 0.,
             b: 0.,
-        }
+        };
+        COLOR
     }
 
-    /// Creates green color.
+    /// Creates green color `(0., 1., 0.)`.
     pub const fn green() -> Self {
-        Color {
+        const COLOR: Color = Color {
             r: 0.,
             g: 1.,
             b: 0.,
-        }
+        };
+        COLOR
     }
 
-    /// Creates blue color.
+    /// Creates blue color `(0., 0., 1.)`.
     pub const fn blue() -> Self {
-        Color {
+        const COLOR: Color = Color {
             r: 0.,
             g: 0.,
             b: 1.,
-        }
+        };
+        COLOR
     }
 
     /// Converts color to u8 tuple.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Color;
+    /// let color = Color::new(1., 0.5, 0.);
+    /// assert_eq!(color.as_tuple(), (255, 128, 0));
+    /// ```
     pub fn as_tuple(&self) -> (u8, u8, u8) {
         let r = (self.r.clamp(0., 1.) * 255.).round() as u8;
         let g = (self.g.clamp(0., 1.) * 255.).round() as u8;

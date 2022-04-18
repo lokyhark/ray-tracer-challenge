@@ -14,6 +14,16 @@ impl Canvas {
     /// Creates a canvas of specified size `(width, height)`.
     ///
     /// Each pixel have a black [`Color`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::{Canvas, Color};
+    /// let canvas = Canvas::new(10, 20);
+    /// assert_eq!(canvas.width(), 10);
+    /// assert_eq!(canvas.height(), 20);
+    /// assert!(canvas.iter().all(|&c| c == Color::black()));
+    /// ```
     pub fn new(width: usize, height: usize) -> Self {
         Canvas {
             width,
@@ -23,6 +33,17 @@ impl Canvas {
     }
 
     /// Creates a canvas of specified size `(width, height)` and color.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::{Canvas, Color};
+    /// let color = Color::red();
+    /// let canvas = Canvas::with_color(10, 20, color);
+    /// assert_eq!(canvas.width(), 10);
+    /// assert_eq!(canvas.height(), 20);
+    /// assert!(canvas.iter().all(|&c| c == Color::red()));
+    /// ```
     pub fn with_color(width: usize, height: usize, color: Color) -> Self {
         Canvas {
             width,
