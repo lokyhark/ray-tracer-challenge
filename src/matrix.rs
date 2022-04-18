@@ -3,7 +3,7 @@ use std::ops::Mul;
 use crate::{util::float_eq, Point, Vector};
 
 /// Matrix 4x4.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Default)]
 pub struct Matrix {
     elements: [f64; 16],
 }
@@ -13,17 +13,76 @@ impl Matrix {
         1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.,
     ]);
 
-    /// Creates a new matrix from specified elements
+    /// Creates a new matrix from specified elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let matrix = Matrix::new([
+    ///     1., 2., 3., 4.,
+    ///     5.5, 6.5, 7.5, 8.5,
+    ///     9., 10., 11., 12.,
+    ///     13.5, 14.5, 15.5, 16.5,
+    /// ]);
+    /// assert_eq!(*matrix.get(0, 0), 1.);
+    /// assert_eq!(*matrix.get(0, 1), 2.);
+    /// assert_eq!(*matrix.get(0, 2), 3.);
+    /// assert_eq!(*matrix.get(0, 3), 4.);
+    /// assert_eq!(*matrix.get(1, 0), 5.5);
+    /// assert_eq!(*matrix.get(1, 1), 6.5);
+    /// assert_eq!(*matrix.get(1, 2), 7.5);
+    /// assert_eq!(*matrix.get(1, 3), 8.5);
+    /// assert_eq!(*matrix.get(2, 0), 9.);
+    /// assert_eq!(*matrix.get(2, 1), 10.);
+    /// assert_eq!(*matrix.get(2, 2), 11.);
+    /// assert_eq!(*matrix.get(2, 3), 12.);
+    /// assert_eq!(*matrix.get(3, 0), 13.5);
+    /// assert_eq!(*matrix.get(3, 1), 14.5);
+    /// assert_eq!(*matrix.get(3, 2), 15.5);
+    /// assert_eq!(*matrix.get(3, 3), 16.5);
+    /// ```
     pub const fn new(elements: [f64; 16]) -> Self {
         Self { elements }
     }
 
-    /// Returns identity matrix
+    /// Returns identity matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let matrix = Matrix::identity();
+    /// assert_eq!(*matrix.get(0, 0), 1.);
+    /// assert_eq!(*matrix.get(0, 1), 0.);
+    /// assert_eq!(*matrix.get(0, 2), 0.);
+    /// assert_eq!(*matrix.get(0, 3), 0.);
+    /// assert_eq!(*matrix.get(1, 0), 0.);
+    /// assert_eq!(*matrix.get(1, 1), 1.);
+    /// assert_eq!(*matrix.get(1, 2), 0.);
+    /// assert_eq!(*matrix.get(1, 3), 0.);
+    /// assert_eq!(*matrix.get(2, 0), 0.);
+    /// assert_eq!(*matrix.get(2, 1), 0.);
+    /// assert_eq!(*matrix.get(2, 2), 1.);
+    /// assert_eq!(*matrix.get(2, 3), 0.);
+    /// assert_eq!(*matrix.get(3, 0), 0.);
+    /// assert_eq!(*matrix.get(3, 1), 0.);
+    /// assert_eq!(*matrix.get(3, 2), 0.);
+    /// assert_eq!(*matrix.get(3, 3), 1.);
+    /// ```
     pub const fn identity() -> Self {
         Self::IDENTITY
     }
 
     /// Get element.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let matrix = Matrix::identity();
+    /// assert_eq!(*matrix.get(0, 0), 1.);
+    /// ```
     pub fn get(&self, row: usize, col: usize) -> &f64 {
         assert!(row < 4);
         assert!(col < 4);
@@ -31,10 +90,50 @@ impl Matrix {
     }
 
     /// Get mutable element.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let mut matrix = Matrix::identity();
+    /// assert_eq!(*matrix.get(0, 0), 1.);
+    /// *matrix.get_mut(0, 0) *= 2.;
+    /// assert_eq!(*matrix.get(0, 0), 2.);
+    /// ```
     pub fn get_mut(&mut self, row: usize, col: usize) -> &mut f64 {
         assert!(row < 4);
         assert!(col < 4);
         &mut self.elements[row * 4 + col]
+    }
+
+    /// Transpose the matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let a = Matrix::new([
+    ///     0., 9., 3., 0.,
+    ///     9., 8., 0., 8.,
+    ///     1., 8., 5., 3.,
+    ///     0., 0., 5., 8.,
+    /// ]);
+    /// let t = Matrix::new([
+    ///     0., 9., 1., 0.,
+    ///     9., 8., 8., 0.,
+    ///     3., 0., 5., 5.,
+    ///     0., 8., 3., 8.,
+    /// ]);
+    /// assert_eq!(a.transpose(), t);
+    /// ```
+    pub fn transpose(&self) -> Self {
+        let mut matrix = Self::default();
+        for row in 0..4 {
+            for col in 0..4 {
+                *matrix.get_mut(col, row) = *self.get(row, col);
+            }
+        }
+        matrix
     }
 }
 
@@ -180,5 +279,16 @@ mod tests {
             0., 1., 2., 4., 1., 2., 4., 8., 2., 4., 8., 16., 4., 8., 16., 32.,
         ]);
         assert_eq!(a * Matrix::identity(), a);
+    }
+
+    #[test]
+    fn transpose() {
+        let a = Matrix::new([
+            0., 9., 3., 0., 9., 8., 0., 8., 1., 8., 5., 3., 0., 0., 5., 8.,
+        ]);
+        let t = Matrix::new([
+            0., 9., 1., 0., 9., 8., 8., 0., 3., 0., 5., 5., 0., 8., 3., 8.,
+        ]);
+        assert_eq!(a.transpose(), t);
     }
 }
