@@ -7,8 +7,14 @@
 
 pub(crate) mod util;
 
-mod num;
-pub use num::Num;
+mod canvas;
+pub use canvas::Canvas;
+
+mod color;
+pub use color::Color;
+
+mod matrix;
+pub use matrix::Matrix;
 
 mod point;
 pub use point::Point;

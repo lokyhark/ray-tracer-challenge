@@ -1,23 +1,23 @@
 use std::{
     fmt::Display,
-    ops::{Add, Div, Mul, Neg, Sub},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
-use crate::{util::float_eq, Num};
+use crate::util::float_eq;
 
 /// Geometric object that has magnitude and direction denoted by a tuple of
 /// scalar components `(x,y,z)`.
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Vector<Float: Num> {
+pub struct Vector {
     /// scalar component along the `x` axis
-    pub x: Float,
+    pub x: f64,
     /// scalar component along the `y` axis
-    pub y: Float,
+    pub y: f64,
     /// scalar component along the `z` axis
-    pub z: Float,
+    pub z: f64,
 }
 
-impl<Float: Num> Vector<Float> {
+impl Vector {
     /// Creates a `Vector` in euclidian solid space (three-dimensional) from
     /// specified scalar components.
     ///
@@ -30,16 +30,34 @@ impl<Float: Num> Vector<Float> {
     /// assert_eq!(vector.y, 2.0);
     /// assert_eq!(vector.z, 3.0);
     /// ```
-    pub fn new(x: Float, y: Float, z: Float) -> Self {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
 
     /// Returns the length/magniture of the vector.
-    pub fn len(&self) -> Float {
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let vector = Vector::new(1., 2., 3.);
+    /// assert_eq!(vector.len(), 14_f64.sqrt());
+    /// ```
+    pub fn len(&self) -> f64 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     /// Normalizes the vector.
+    ///
+    /// # Examples
+    ///  
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let mut vector = Vector::new(4., 0., 0.);
+    /// let normal = Vector::new(1., 0., 0.);
+    /// vector.normalize();
+    /// assert_eq!(vector, normal);
+    /// ```
     pub fn normalize(&mut self) {
         let len = self.len();
         self.x /= len;
@@ -48,6 +66,16 @@ impl<Float: Num> Vector<Float> {
     }
 
     /// Returns normalized version of the vector.
+    ///
+    /// # Examples
+    ///  
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let vector = Vector::new(4., 0., 0.);
+    /// let actual = vector.normalized();
+    /// let expected = Vector::new(1., 0., 0.);
+    /// assert_eq!(actual, expected);
+    /// ```
     pub fn normalized(&self) -> Self {
         let len = self.len();
         Vector {
@@ -58,12 +86,31 @@ impl<Float: Num> Vector<Float> {
     }
 
     /// Returns the dot product between `self` and `rhs`.
-    pub fn dot(&self, rhs: Vector<Float>) -> Float {
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let a = Vector::new(1., 2., 3.);
+    /// let b = Vector::new(2., 3., 4.);
+    /// assert_eq!(a.dot(b), 20.);
+    /// ```
+    pub fn dot(&self, rhs: Vector) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 
     /// Returns the cross product between `self` and `rhs`.
-    pub fn cross(&self, rhs: Vector<Float>) -> Vector<Float> {
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Vector;
+    /// let a = Vector::new(1., 2., 3.);
+    /// let b = Vector::new(2., 3., 4.);
+    /// assert_eq!(a.cross(b), Vector::new(-1., 2., -1.));
+    /// assert_eq!(b.cross(a), Vector::new(1., -2., 1.));
+    /// ```
+    pub fn cross(&self, rhs: Vector) -> Vector {
         Vector {
             x: self.y * rhs.z - self.z * rhs.y,
             y: self.z * rhs.x - self.x * rhs.z,
@@ -72,22 +119,22 @@ impl<Float: Num> Vector<Float> {
     }
 }
 
-impl<Float: Num> Display for Vector<Float> {
+impl Display for Vector {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.write_fmt(format_args!("({},{},{})", self.x, self.y, self.z))
     }
 }
 
-impl<Float: Num> PartialEq for Vector<Float> {
+impl PartialEq for Vector {
     fn eq(&self, other: &Self) -> bool {
         float_eq(self.x, other.x) && float_eq(self.y, other.y) && float_eq(self.z, other.z)
     }
 }
 
-impl<Float: Num> Add for Vector<Float> {
+impl Add for Vector {
     type Output = Self;
 
-    fn add(self, rhs: Vector<Float>) -> Self::Output {
+    fn add(self, rhs: Vector) -> Self::Output {
         Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
@@ -96,7 +143,15 @@ impl<Float: Num> Add for Vector<Float> {
     }
 }
 
-impl<Float: Num> Sub for Vector<Float> {
+impl AddAssign for Vector {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
+impl Sub for Vector {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -108,7 +163,15 @@ impl<Float: Num> Sub for Vector<Float> {
     }
 }
 
-impl<Float: Num> Neg for Vector<Float> {
+impl SubAssign for Vector {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+        self.z -= rhs.z;
+    }
+}
+
+impl Neg for Vector {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
@@ -120,10 +183,10 @@ impl<Float: Num> Neg for Vector<Float> {
     }
 }
 
-impl<Float: Num> Mul<Float> for Vector<Float> {
+impl Mul<f64> for Vector {
     type Output = Self;
 
-    fn mul(self, rhs: Float) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Vector {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -132,14 +195,40 @@ impl<Float: Num> Mul<Float> for Vector<Float> {
     }
 }
 
-impl<Float: Num> Div<Float> for Vector<Float> {
+impl MulAssign<f64> for Vector {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
+    }
+}
+
+impl Div<f64> for Vector {
     type Output = Self;
 
-    fn div(self, rhs: Float) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         Vector {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+        }
+    }
+}
+
+impl DivAssign<f64> for Vector {
+    fn div_assign(&mut self, rhs: f64) {
+        self.x /= rhs;
+        self.y /= rhs;
+        self.z /= rhs;
+    }
+}
+
+impl From<(f64, f64, f64)> for Vector {
+    fn from(tuple: (f64, f64, f64)) -> Self {
+        Self {
+            x: tuple.0,
+            y: tuple.1,
+            z: tuple.2,
         }
     }
 }
@@ -153,6 +242,14 @@ mod tests {
     #[test]
     fn new() {
         let vector = Vector::new(1., 2., 3.);
+        assert!(float_eq(vector.x, 1.));
+        assert!(float_eq(vector.y, 2.));
+        assert!(float_eq(vector.z, 3.));
+    }
+
+    #[test]
+    fn from() {
+        let vector: Vector = (1., 2., 3.).into();
         assert!(float_eq(vector.x, 1.));
         assert!(float_eq(vector.y, 2.));
         assert!(float_eq(vector.z, 3.));
@@ -179,11 +276,28 @@ mod tests {
     }
 
     #[test]
+    fn add_assign() {
+        let mut vector = Vector::new(1., 2., 3.);
+        let result = Vector::new(2., 4., 6.);
+        vector += vector;
+        assert_eq!(vector, result);
+    }
+
+    #[test]
     fn sub() {
         let vector1 = Vector::new(2., 4., 6.);
         let vector2 = Vector::new(1., 2., 3.);
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector1 - vector2, result);
+    }
+
+    #[test]
+    fn sub_assign() {
+        let mut vector1 = Vector::new(2., 4., 6.);
+        let vector2 = Vector::new(1., 2., 3.);
+        let result = Vector::new(1., 2., 3.);
+        vector1 -= vector2;
+        assert_eq!(vector1, result);
     }
 
     #[test]
@@ -202,11 +316,29 @@ mod tests {
     }
 
     #[test]
+    fn mul_assign_scalar() {
+        let mut vector = Vector::new(1., 2., 3.);
+        let scalar = 2.;
+        let result = Vector::new(2., 4., 6.);
+        vector *= scalar;
+        assert_eq!(vector, result);
+    }
+
+    #[test]
     fn div_scalar() {
         let vector = Vector::new(2., 4., 6.);
         let scalar = 2.;
         let result = Vector::new(1., 2., 3.);
         assert_eq!(vector / scalar, result);
+    }
+
+    #[test]
+    fn div_assign_scalar() {
+        let mut vector = Vector::new(2., 4., 6.);
+        let scalar = 2.;
+        let result = Vector::new(1., 2., 3.);
+        vector /= scalar;
+        assert_eq!(vector, result);
     }
 
     #[test]
@@ -218,9 +350,9 @@ mod tests {
         let vector = Vector::new(0., 0., 1.);
         assert!(float_eq(vector.len(), 1.));
         let vector = Vector::new(1., 2., 3.);
-        assert!(float_eq(vector.len(), 14.0.sqrt()));
+        assert!(float_eq(vector.len(), 14f64.sqrt()));
         let vector = Vector::new(-1., -2., -3.);
-        assert!(float_eq(vector.len(), 14.0.sqrt()));
+        assert!(float_eq(vector.len(), 14f64.sqrt()));
     }
 
     #[test]
@@ -247,7 +379,7 @@ mod tests {
         assert!(float_eq(vector.len(), 1.));
 
         let mut vector = Vector::new(1., 2., 3.);
-        let result = Vector::new(1. / 14.0.sqrt(), 2. / 14.0.sqrt(), 3. / 14.0.sqrt());
+        let result = Vector::new(1. / 14f64.sqrt(), 2. / 14f64.sqrt(), 3. / 14f64.sqrt());
         assert_eq!(vector.normalized(), result);
         vector.normalize();
         assert_eq!(vector, result);
