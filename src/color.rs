@@ -38,51 +38,31 @@ impl Color {
 
     /// Creates black color `(0., 0., 0.)`.
     pub const fn black() -> Self {
-        const COLOR: Color = Color {
-            r: 0.,
-            g: 0.,
-            b: 0.,
-        };
+        const COLOR: Color = Color { r: 0., g: 0., b: 0. };
         COLOR
     }
 
     /// Creates white color `(1., 1., 1.)`.
     pub const fn white() -> Self {
-        const COLOR: Color = Color {
-            r: 1.,
-            g: 1.,
-            b: 1.,
-        };
+        const COLOR: Color = Color { r: 1., g: 1., b: 1. };
         COLOR
     }
 
     /// Creates red color `(1., 0., 0.)`.
     pub const fn red() -> Self {
-        const COLOR: Color = Color {
-            r: 1.,
-            g: 0.,
-            b: 0.,
-        };
+        const COLOR: Color = Color { r: 1., g: 0., b: 0. };
         COLOR
     }
 
     /// Creates green color `(0., 1., 0.)`.
     pub const fn green() -> Self {
-        const COLOR: Color = Color {
-            r: 0.,
-            g: 1.,
-            b: 0.,
-        };
+        const COLOR: Color = Color { r: 0., g: 1., b: 0. };
         COLOR
     }
 
     /// Creates blue color `(0., 0., 1.)`.
     pub const fn blue() -> Self {
-        const COLOR: Color = Color {
-            r: 0.,
-            g: 0.,
-            b: 1.,
-        };
+        const COLOR: Color = Color { r: 0., g: 0., b: 1. };
         COLOR
     }
 
