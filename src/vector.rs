@@ -241,10 +241,10 @@ mod tests {
 
     #[test]
     fn new() {
-        let vector = Vector::new(1., 2., 3.);
-        assert!(float_eq(vector.x, 1.));
-        assert!(float_eq(vector.y, 2.));
-        assert!(float_eq(vector.z, 3.));
+        let vector = Vector::new(4.3, -4.2, 3.1);
+        assert!(float_eq(vector.x, 4.3));
+        assert!(float_eq(vector.y, -4.2));
+        assert!(float_eq(vector.z, 3.1));
     }
 
     #[test]

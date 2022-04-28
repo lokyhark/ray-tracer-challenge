@@ -117,10 +117,10 @@ mod tests {
 
     #[test]
     fn new() {
-        let point = Point::new(1., 2., 3.);
-        assert!(float_eq(point.x, 1.));
-        assert!(float_eq(point.y, 2.));
-        assert!(float_eq(point.z, 3.));
+        let point = Point::new(4.3, -4.2, 3.1);
+        assert!(float_eq(point.x, 4.3));
+        assert!(float_eq(point.y, -4.2));
+        assert!(float_eq(point.z, 3.1));
     }
 
     #[test]
