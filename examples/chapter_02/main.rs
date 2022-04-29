@@ -51,10 +51,7 @@ fn tick(projectile: &mut Projectile, environment: &Environment) {
 fn draw(canvas: &mut Canvas, position: &Point) {
     let x = position.x.round() as usize;
     let y = canvas.height() - position.y.round() as usize;
-    match canvas.get_mut(x, y) {
-        Some(color) => *color = RED,
-        None => panic!("out of canvas"),
-    }
+    *canvas.get_mut(x, y) = RED;
 }
 
 fn save(canvas: &Canvas, path: &Path) {

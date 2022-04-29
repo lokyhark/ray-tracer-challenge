@@ -53,15 +53,19 @@ impl Canvas {
     }
 
     /// Returns [`Color`] of specified pixel.
-    pub fn get(&self, x: usize, y: usize) -> Option<&Color> {
+    pub fn get(&self, x: usize, y: usize) -> &Color {
+        assert!(x < self.width);
+        assert!(y < self.height);
         let index = x + y * self.width;
-        self.pixels.get(index)
+        self.pixels.get(index).unwrap()
     }
 
     /// Returns mutable [`Color`] of specified pixel.
-    pub fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut Color> {
+    pub fn get_mut(&mut self, x: usize, y: usize) -> &mut Color {
+        assert!(x < self.width);
+        assert!(y < self.height);
         let index = x + y * self.width;
-        self.pixels.get_mut(index)
+        self.pixels.get_mut(index).unwrap()
     }
 
     /// Get the canvas's width.
@@ -95,7 +99,7 @@ impl Canvas {
         for h in 0..self.height {
             let mut colors = vec![];
             for w in 0..self.width {
-                let color = self.get(w, h).unwrap();
+                let color = self.get(w, h);
                 let (r, g, b) = color.as_tuple();
                 colors.extend([r, g, b]);
             }
@@ -158,8 +162,8 @@ mod tests {
     fn pixel() {
         let mut canvas = Canvas::new(10, 20);
         let red = Color::new(1., 0., 0.);
-        *canvas.get_mut(2, 3).unwrap() = red;
-        assert_eq!(canvas.get(2, 3).unwrap(), &red);
+        *canvas.get_mut(2, 3) = red;
+        assert_eq!(canvas.get(2, 3), &red);
     }
 
     #[test]
@@ -168,9 +172,9 @@ mod tests {
         let c1 = Color::new(1.5, 0., 0.);
         let c2 = Color::new(0., 0.5, 0.);
         let c3 = Color::new(-0.5, 0., 1.);
-        *canvas.get_mut(0, 0).unwrap() = c1;
-        *canvas.get_mut(2, 1).unwrap() = c2;
-        *canvas.get_mut(4, 2).unwrap() = c3;
+        *canvas.get_mut(0, 0) = c1;
+        *canvas.get_mut(2, 1) = c2;
+        *canvas.get_mut(4, 2) = c3;
         let expected = include_str!("../data/chapter_02_1.ppm");
         assert_eq!(canvas.ppm(), expected);
     }
