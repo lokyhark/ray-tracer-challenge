@@ -1,4 +1,4 @@
-use std::ops::Mul;
+use std::{error::Error, fmt::Display, ops::Mul};
 
 use crate::{util::float_eq, Point, Vector};
 
@@ -70,6 +70,126 @@ impl Matrix {
     /// ```
     pub const fn identity() -> Self {
         Self::IDENTITY
+    }
+
+    /// Returns scaling matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let translation = Matrix::translation(2., 3., 4.);
+    /// ```
+    pub fn scaling(x: f64, y: f64, z: f64) -> Self {
+        #[rustfmt::skip]
+        let elements = [
+            x , 0., 0., 0.,
+            0., y , 0., 0.,
+            0., 0., z , 0.,
+            0., 0., 0., 1.
+        ];
+        Matrix { elements }
+    }
+
+    /// Returns translation matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let translation = Matrix::translation(5., -3., 2.);
+    /// ```
+    pub fn translation(x: f64, y: f64, z: f64) -> Self {
+        #[rustfmt::skip]
+        let elements = [
+            1., 0., 0., x,
+            0., 1., 0., y,
+            0., 0., 1., z,
+            0., 0., 0., 1.
+        ];
+        Matrix { elements }
+    }
+
+    /// Returns the rotation matrix around `x` axis.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// use std::f64::consts::PI;
+    /// let rotation = Matrix::rotation_x(PI);
+    /// ```
+    pub fn rotation_x(radians: f64) -> Self {
+        let r = radians;
+        #[rustfmt::skip]
+        let elements = [
+            1.,      0.,       0., 0.,
+            0., r.cos(), -r.sin(), 0.,
+            0., r.sin(),  r.cos(), 0.,
+            0.,      0.,       0., 1.
+        ];
+        Matrix { elements }
+    }
+
+    // Returns the rotation matrix around `y` axis.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// use std::f64::consts::PI;
+    /// let rotation = Matrix::rotation_y(PI);
+    /// ```
+    pub fn rotation_y(radians: f64) -> Self {
+        let r = radians;
+        #[rustfmt::skip]
+        let elements = [
+            r.cos(), 0., r.sin(), 0.,
+                  0., 1.,      0., 0.,
+            -r.sin(), 0., r.cos(), 0.,
+                  0., 0.,      0., 1.
+        ];
+        Matrix { elements }
+    }
+
+    /// Returns the rotation matrix around `z` axis.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// use std::f64::consts::PI;
+    /// let rotation = Matrix::rotation_z(PI);
+    /// ```
+    pub fn rotation_z(radians: f64) -> Self {
+        let r = radians;
+        #[rustfmt::skip]
+        let elements = [
+            r.cos(), -r.sin(), 0., 0.,
+            r.sin(),  r.cos(), 0., 0.,
+                 0.,       0., 1., 0.,
+                 0.,       0., 0., 1.
+        ];
+        Matrix { elements }
+    }
+
+    /// Returns the shearing matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use ray_tracer_challenge::Matrix;
+    /// let shearing = Matrix::shearing(1., 2., 3., 4., 5., 6.);
+    /// ```
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+        #[rustfmt::skip]
+        let elements = [
+            1., xy, xz, 0.,
+            yx, 1., yz, 0.,
+            zx, zy, 1., 0.,
+            0., 0., 0., 1.
+        ];
+        Matrix { elements }
     }
 
     /// Get element.
@@ -189,23 +309,26 @@ impl Matrix {
     ///     -0.07895, -0.22368, -0.05263,  0.19737,
     ///     -0.52256, -0.81391, -0.30075,  0.30639,
     /// ]);
-    /// assert_eq!(a.inverse(), i);
+    /// assert_eq!(a.inverse(), Ok(i));
     /// ```
-    pub fn inverse(&self) -> Matrix {
+    pub fn inverse(&self) -> Result<Matrix, SingularMatrix> {
         inv(self.elements)
     }
 }
 
-fn inv(matrix: [f64; 16]) -> Matrix {
+fn inv(matrix: [f64; 16]) -> Result<Matrix, SingularMatrix> {
     let mut inverse = [0.; 16];
     let determinant = det4(matrix);
+    if float_eq(determinant, 0.) {
+        return Err(SingularMatrix);
+    }
     for row in 0..4 {
         for col in 0..4 {
             let cofactor = cofactor4(matrix, row, col);
             inverse[col * 4 + row] = cofactor / determinant;
         }
     }
-    Matrix::new(inverse)
+    Ok(Matrix::new(inverse))
 }
 
 fn det2(matrix: [f64; 4]) -> f64 {
@@ -282,6 +405,17 @@ fn cofactor4(matrix: [f64; 16], row: usize, col: usize) -> f64 {
     }
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub struct SingularMatrix;
+
+impl Display for SingularMatrix {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        "singular matrix".fmt(fmt)
+    }
+}
+
+impl Error for SingularMatrix {}
+
 impl PartialEq for Matrix {
     fn eq(&self, other: &Self) -> bool {
         self.elements
@@ -332,6 +466,8 @@ impl Mul<Point> for Matrix {
 
 #[cfg(test)]
 mod tests {
+    use std::f64::consts::PI;
+
     use crate::util::float_eq;
 
     use super::*;
@@ -613,7 +749,7 @@ mod tests {
             -0.07895, -0.22368, -0.05263,  0.19737, 
             -0.52256, -0.81391, -0.30075,  0.30639,
         ]);
-        assert_eq!(matrix.inverse(), inverse);
+        assert_eq!(matrix.inverse(), Ok(inverse));
 
         #[rustfmt::skip]
         let matrix = Matrix::new([
@@ -629,7 +765,7 @@ mod tests {
              0.35897, 0.35897, 0.43590, 0.92308,
             -0.69231, -0.69231, -0.76923, -1.92308 
         ]);
-        assert_eq!(matrix.inverse(), inverse);
+        assert_eq!(matrix.inverse(), Ok(inverse));
 
         #[rustfmt::skip]
         let matrix = Matrix::new([
@@ -645,7 +781,7 @@ mod tests {
             -0.02901, -0.14630, -0.10926, 0.12963, 
             0.17778, 0.06667, -0.26667, 0.33333, 
         ]);
-        assert_eq!(matrix.inverse(), inverse);
+        assert_eq!(matrix.inverse(), Ok(inverse));
     }
 
     #[test]
@@ -657,7 +793,7 @@ mod tests {
             -4., 4., 4., 1., 
             -6., 5.,-1., 1.,
         ]);
-        let i = a.inverse();
+        let i = a.inverse().unwrap();
         let identity = Matrix::identity();
         assert_eq!(a * i, identity);
     }
@@ -679,13 +815,13 @@ mod tests {
             6.,-2., 0., 5.,
         ]);
         let c = a * b;
-        assert_eq!(c * b.inverse(), a);
+        assert_eq!(c * b.inverse().unwrap(), a);
     }
 
     #[test]
     fn invert_identity() {
         let identity = Matrix::identity();
-        assert_eq!(identity.inverse(), identity);
+        assert_eq!(identity.inverse(), Ok(identity));
     }
 
     #[test]
@@ -697,10 +833,136 @@ mod tests {
             7., 7., -6., -7.,
             1., -3., 7., 4.
         ]);
-        let inverse = matrix.inverse();
+        let inverse = matrix.inverse().unwrap();
         let left = inverse.transpose();
         let transpose = matrix.transpose();
-        let right = transpose.inverse();
+        let right = transpose.inverse().unwrap();
         assert_eq!(left, right);
+    }
+
+    #[test]
+    fn point_translation() {
+        let transform = Matrix::translation(5., -3., 2.);
+        let point = Point::new(-3., 4., 5.);
+        let result = Point::new(2., 1., 7.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn point_inverse_translation() {
+        let transform = Matrix::translation(5., -3., 2.);
+        let transform = transform.inverse().unwrap();
+        let point = Point::new(-3., 4., 5.);
+        let result = Point::new(-8., 7., 3.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn vector_translation() {
+        let transform = Matrix::translation(5., -3., 2.);
+        let vector = Vector::new(-3., 4., 5.);
+        assert_eq!(transform * vector, vector)
+    }
+
+    #[test]
+    fn point_scaling() {
+        let transform = Matrix::scaling(2., 3., 4.);
+        let point = Point::new(-4., 6., 8.);
+        let result = Point::new(-8., 18., 32.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn vector_scaling() {
+        let transform = Matrix::scaling(2., 3., 4.);
+        let vector = Vector::new(-4., 6., 8.);
+        let result = Vector::new(-8., 18., 32.);
+        assert_eq!(transform * vector, result);
+    }
+
+    #[test]
+    fn vector_inverse_scaling() {
+        let transform = Matrix::scaling(2., 3., 4.);
+        let transform = transform.inverse().unwrap();
+        let vector = Vector::new(-4., 6., 8.);
+        let result = Vector::new(-2., 2., 2.);
+        assert_eq!(transform * vector, result);
+    }
+
+    #[test]
+    fn point_scaling_reflexion() {
+        let transform = Matrix::scaling(-1., 1., 1.);
+        let point = Point::new(2., 3., 4.);
+        let result = Point::new(-2., 3., 4.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn point_rotation_x() {
+        let point = Point::new(0., 1., 0.);
+        let transform = Matrix::rotation_x(PI / 4.);
+        let result = Point::new(0., 2f64.sqrt() / 2., 2f64.sqrt() / 2.);
+        assert_eq!(transform * point, result);
+        let transform = Matrix::rotation_x(PI / 2.);
+        let result = Point::new(0., 0., 1.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn point_inverse_rotation_x() {
+        let point = Point::new(0., 1., 0.);
+        let transform = Matrix::rotation_x(PI / 4.);
+        let transform = transform.inverse().unwrap();
+        let result = Point::new(0., 2f64.sqrt() / 2., -(2f64.sqrt()) / 2.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn point_rotation_y() {
+        let point = Point::new(0., 0., 1.);
+        let transform = Matrix::rotation_y(PI / 4.);
+        let result = Point::new(2f64.sqrt() / 2., 0., 2f64.sqrt() / 2.);
+        assert_eq!(transform * point, result);
+        let transform = Matrix::rotation_y(PI / 2.);
+        let result = Point::new(1., 0., 0.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn point_rotation_z() {
+        let point = Point::new(0., 1., 0.);
+        let transform = Matrix::rotation_z(PI / 4.);
+        let result = Point::new(-(2f64.sqrt()) / 2., 2f64.sqrt() / 2., 0.);
+        assert_eq!(transform * point, result);
+        let transform = Matrix::rotation_z(PI / 2.);
+        let result = Point::new(-1., 0., 0.);
+        assert_eq!(transform * point, result);
+    }
+
+    #[test]
+    fn shearing() {
+        let point = Point::new(2., 3., 4.);
+        let transform = Matrix::shearing(1., 0., 0., 0., 0., 0.);
+        assert_eq!(transform * point, Point::new(5., 3., 4.));
+        let transform = Matrix::shearing(0., 1., 0., 0., 0., 0.);
+        assert_eq!(transform * point, Point::new(6., 3., 4.));
+        let transform = Matrix::shearing(0., 0., 1., 0., 0., 0.);
+        assert_eq!(transform * point, Point::new(2., 5., 4.));
+        let transform = Matrix::shearing(0., 0., 0., 1., 0., 0.);
+        assert_eq!(transform * point, Point::new(2., 7., 4.));
+        let transform = Matrix::shearing(0., 0., 0., 0., 1., 0.);
+        assert_eq!(transform * point, Point::new(2., 3., 6.));
+        let transform = Matrix::shearing(0., 0., 0., 0., 0., 1.);
+        assert_eq!(transform * point, Point::new(2., 3., 7.));
+    }
+
+    #[test]
+    fn chaining_transformation() {
+        let point = Point::new(1., 0., 1.);
+        let a = Matrix::rotation_x(PI / 2.);
+        let b = Matrix::scaling(5., 5., 5.);
+        let c = Matrix::translation(10., 5., 7.);
+        let result = Point::new(15., 0., 7.);
+        assert_eq!(c * b * a * point, result);
     }
 }
